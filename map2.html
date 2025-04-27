@@ -1,0 +1,435 @@
+<html><head><base href="https://drone-mapper.com/editor">
+    <title>Drone Mapper - Advanced Aerial Mapping Software</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'bg-primary': '#f0f4f8',
+            'bg-secondary': '#ffffff',
+            'border-color': '#d1d5db',
+            'highlight-color': '#3b82f6',
+            'text-primary': '#1f2937',
+            'text-secondary': '#4b5563',
+            'sidebar-bg': '#111827',
+            'sidebar-title': '#ff9900',
+          }
+        }
+      }
+    }
+    </script>
+    <style type="text/tailwindcss">
+    @layer utilities {
+      .scrollbar-thin {
+        scrollbar-width: thin;
+      }
+      .scrollbar-thumb-border-color::-webkit-scrollbar-thumb {
+        background-color: theme('colors.border-color');
+      }
+      .scrollbar-track-bg-primary::-webkit-scrollbar-track {
+        background-color: theme('colors.bg-primary');
+      }
+      .sidebar-button {
+        @apply flex items-center text-blue-100 hover:text-white transition-colors duration-200 bg-[#111827] border border-[#ff9900] rounded px-2 py-1;
+      }
+    }
+    </style>
+    </head>
+    <body class="bg-bg-primary text-text-primary font-sans h-screen flex overflow-hidden">
+      <div class="w-64 bg-[#111827] flex-shrink-0 fixed top-0 left-0 bottom-0 z-10 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-blue-800 shadow-lg">
+        <div class="h-14 flex items-center justify-between border-b border-blue-600 px-4">
+          <h2 class="text-xl font-bold text-[#ff9900]">Drone Mapper</h2>
+        </div>
+        <nav class="mt-6 px-4">
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-sm font-semibold text-blue-300 uppercase tracking-wider mb-2">Projects</h3>
+              <ul class="space-y-2">
+                <li><a href="#" class="sidebar-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                  </svg>
+                  Recent Projects
+                </a></li>
+                <li><a href="#" class="sidebar-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                  New Project
+                </a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-blue-300 uppercase tracking-wider mb-2">Tools</h3>
+              <ul class="space-y-2">
+                <li><a href="#" class="sidebar-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                  </svg>
+                  Map Editor
+                </a></li>
+                <li><a href="#" class="sidebar-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                  </svg>
+                  Import Data
+                </a></li>
+                <li><a href="#" class="sidebar-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                  </svg>
+                  Export Map
+                </a></li>
+                <li><a href="#" class="sidebar-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                  </svg>
+                  Analyze Terrain
+                </a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-blue-300 uppercase tracking-wider mb-2">Settings</h3>
+              <ul class="space-y-2">
+                <li><a href="#" class="sidebar-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                  </svg>
+                  Account
+                </a></li>
+                <li><a href="#" class="sidebar-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  Preferences
+                </a></li>
+                <li><a href="#" class="sidebar-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  Help &amp; Support
+                </a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="absolute bottom-0 left-0 right-0 p-4">
+          <a href="#" class="sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Logout
+          </a>
+        </div>
+      </div>
+      
+      <div class="flex-grow ml-64 mr-80">
+        <div class="h-14 bg-bg-secondary border-b border-border-color flex items-center px-4 shadow-md">
+          <h1 class="text-lg font-semibold text-text-primary">Drone Mapper Dashboard</h1>
+          <div class="ml-auto flex space-x-2">
+            <button id="modeTerrain" class="bg-bg-primary text-text-secondary px-3 py-1 rounded text-sm font-semibold transition-all duration-200 ease-in-out hover:bg-highlight-color hover:text-white">
+              Terrain
+            </button>
+            <button id="modeSatellite" class="bg-highlight-color text-white px-3 py-1 rounded text-sm font-semibold transition-all duration-200 ease-in-out hover:bg-opacity-90">
+              Satellite
+            </button>
+            <button id="modeTopographical" class="bg-bg-primary text-text-secondary px-3 py-1 rounded text-sm font-semibold transition-all duration-200 ease-in-out hover:bg-highlight-color hover:text-white">
+              Topographical
+            </button>
+            <button id="mode3D" class="bg-bg-primary text-text-secondary px-3 py-1 rounded text-sm font-semibold transition-all duration-200 ease-in-out hover:bg-highlight-color hover:text-white">
+              3D View
+            </button>
+            <div class="flex">
+              <input type="text" id="locationSearch" placeholder="Search location..." class="bg-bg-primary text-text-secondary px-3 py-1 rounded-l border border-border-color focus:outline-none focus:ring-2 focus:ring-highlight-color">
+              <button id="searchButton" class="bg-highlight-color text-white px-3 py-1 rounded-r text-sm font-semibold transition-all duration-200 ease-in-out hover:bg-opacity-90 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                Search
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 h-[calc(100vh-3.5rem)] overflow-y-auto">
+          <div id="mapContainer" class="h-full bg-bg-secondary border border-border-color rounded-lg shadow-lg overflow-hidden z-0">
+            <!-- Leaflet map will be inserted here -->
+          </div>
+        </div>
+      </div>
+      
+      <div class="w-80 bg-bg-secondary fixed top-0 right-0 bottom-0 z-10 overflow-y-auto scrollbar-thin scrollbar-thumb-border-color scrollbar-track-bg-primary shadow-lg">
+        <div class="h-14 flex items-center justify-between border-b border-border-color px-4">
+          <h2 class="text-lg font-semibold text-text-primary">Drone Mission Planner</h2>
+          <button id="togglePlannerBtn" class="text-text-secondary hover:text-text-primary transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+          </button>
+        </div>
+        <div id="plannerContainer" class="flex flex-col h-[calc(100%-3.5rem)]">
+          <div id="missionDetails" class="flex-grow p-4 space-y-4 overflow-y-auto">
+            <div class="bg-bg-primary rounded-lg p-3 shadow-md">
+              <h3 class="font-semibold text-text-primary mb-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-highlight-color" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+                Mission Parameters
+              </h3>
+              <div class="space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-text-secondary">Flight Altitude:</span>
+                  <span class="text-text-primary font-medium">120m</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-text-secondary">Flight Speed:</span>
+                  <span class="text-text-primary font-medium">15 m/s</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-text-secondary">Image Overlap:</span>
+                  <span class="text-text-primary font-medium">75%</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-text-secondary">Est. Flight Time:</span>
+                  <span class="text-text-primary font-medium">22 mins</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-text-secondary">Flight Area:</span>
+                  <span id="flightAreaValue" class="text-text-primary font-medium">0 m²</span>
+                </div>
+              </div>
+            </div>
+            <div class="bg-bg-primary rounded-lg p-3 shadow-md">
+              <h3 class="font-semibold text-text-primary mb-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-highlight-color" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                Waypoints
+              </h3>
+              <ul id="waypointsList" class="space-y-2">
+                <!-- Waypoints will be dynamically added here -->
+              </ul>
+              <button id="copyWaypointsBtn" class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded font-semibold text-sm transition-all duration-200 ease-in-out flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                </svg>
+                Copy Coordinates
+              </button>
+              <div id="copyMessage" class="mt-2 text-center text-green-500 font-medium opacity-0 transition-opacity duration-300">
+                Coordinates copied to clipboard!
+              </div>
+            </div>
+          </div>
+          <div class="p-4 border-t border-border-color">
+            <button id="startMissionBtn" class="w-full bg-highlight-color text-white py-2 px-4 rounded font-semibold text-sm transition-all duration-200 ease-in-out hover:bg-opacity-90 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Start Mission
+            </button>
+          </div>
+        </div>
+      </div>
+    
+    <script>
+    let map;
+    let currentLayer;
+    let drawnItems;
+    
+    function initMap() {
+      if (document.getElementById('mapContainer')) {
+        map = L.map('mapContainer').setView([34.0522, -118.2437], 13);
+        currentLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: '© ArcGIS'
+        }).addTo(map);
+    
+        drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+    
+        var drawControl = new L.Control.Draw({
+          edit: {
+            featureGroup: drawnItems
+          },
+          draw: {
+            polygon: true,
+            polyline: false,
+            rectangle: false,
+            circle: false,
+            marker: false,
+            circlemarker: false
+          }
+        });
+        map.addControl(drawControl);
+    
+        map.on('draw:created', function(e) {
+          var layer = e.layer;
+          drawnItems.addLayer(layer);
+          updateWaypoints(layer);
+        });
+    
+        map.on('draw:edited', function(e) {
+          var layers = e.layers;
+          layers.eachLayer(function(layer) {
+            updateWaypoints(layer);
+          });
+        });
+    
+        map.on('draw:deleted', function(e) {
+          clearWaypoints();
+        });
+      } else {
+        console.error('Map container not found');
+      }
+    }
+    
+    function updateWaypoints(layer) {
+      var coordinates = layer.getLatLngs()[0];
+      var waypointsList = document.getElementById('waypointsList');
+      waypointsList.innerHTML = '';
+    
+      coordinates.forEach(function(coord, index) {
+        var li = document.createElement('li');
+        li.className = 'flex justify-between items-center';
+        li.innerHTML = `
+          <span class="text-text-secondary">Waypoint ${index + 1}</span>
+          <span class="text-text-primary font-medium">${coord.lat.toFixed(4)}° N, ${coord.lng.toFixed(4)}° W</span>
+        `;
+        waypointsList.appendChild(li);
+      });
+    }
+    
+    function clearWaypoints() {
+      var waypointsList = document.getElementById('waypointsList');
+      waypointsList.innerHTML = '';
+    }
+    
+    function showMissionModal(missionName) {
+      // Implementation for showing mission modal
+    }
+    
+    function closeMissionModal() {
+      // Implementation for closing mission modal
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      initMap();
+      
+      // Add event listener for the copy coordinates button
+      document.getElementById('copyWaypointsBtn').addEventListener('click', function() {
+        var coordinates = [];
+        drawnItems.eachLayer(function(layer) {
+          if (layer instanceof L.Polygon) {
+            var latlngs = layer.getLatLngs()[0];
+            latlngs.forEach(function(latlng) {
+              coordinates.push(latlng.lat.toFixed(6) + ',' + latlng.lng.toFixed(6));
+            });
+          }
+        });
+        
+        if (coordinates.length > 0) {
+          var coordText = coordinates.join('\n');
+          navigator.clipboard.writeText(coordText).then(function() {
+            // Show the copy message
+            var copyMessage = document.getElementById('copyMessage');
+            copyMessage.style.opacity = '1';
+            setTimeout(function() {
+              copyMessage.style.opacity = '0';
+            }, 2000);
+          }).catch(function(err) {
+            console.error('Failed to copy coordinates: ', err);
+          });
+        } else {
+          alert('No polygon coordinates to copy. Please draw a polygon first.');
+        }
+      });
+    });
+    
+    // Event listeners for buttons
+    document.getElementById('modeTerrain').addEventListener('click', function() {
+      currentLayer.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+      updateButtonStyles(this);
+    });
+    
+    document.getElementById('modeSatellite').addEventListener('click', function() {
+      currentLayer.setUrl('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+      updateButtonStyles(this);
+    });
+    
+    document.getElementById('modeTopographical').addEventListener('click', function() {
+      currentLayer.setUrl('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png');
+      updateButtonStyles(this);
+    });
+    
+    document.getElementById('mode3D').addEventListener('click', function() {
+      // Implement 3D view logic here
+      console.log('3D view not implemented in this demo');
+    });
+    
+    function updateButtonStyles(clickedButton) {
+      const buttons = ['modeTerrain', 'modeSatellite', 'modeTopographical', 'mode3D'];
+      buttons.forEach(id => {
+        const button = document.getElementById(id);
+        if (button === clickedButton) {
+          button.classList.remove('bg-bg-primary', 'text-text-secondary');
+          button.classList.add('bg-highlight-color', 'text-white');
+        } else {
+          button.classList.remove('bg-highlight-color', 'text-white');
+          button.classList.add('bg-bg-primary', 'text-text-secondary');
+        }
+      });
+    }
+    
+    document.getElementById('searchButton').addEventListener('click', function() {
+      var searchQuery = document.getElementById('locationSearch').value;
+      searchLocation(searchQuery);
+    });
+    
+    document.getElementById('startMissionBtn').addEventListener('click', function() {
+      // Implement mission start logic here
+      console.log('Starting mission');
+    });
+    
+    function searchLocation(query) {
+      if (!query) {
+        alert('Please enter a location to search.');
+        return;
+      }
+    
+      // Use OpenStreetMap Nominatim API for geocoding
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.length > 0) {
+            const result = data[0];
+            const lat = parseFloat(result.lat);
+            const lon = parseFloat(result.lon);
+            map.setView([lat, lon], 13);
+            L.marker([lat, lon]).addTo(map)
+              .bindPopup(result.display_name)
+              .openPopup();
+          } else {
+            alert('Location not found. Please try a different search term.');
+          }
+        })
+        .catch(error => {
+          console.error('Error searching for location:', error);
+          alert('An error occurred while searching for the location. Please try again.');
+        });
+    }
+    
+    // Add event listener for Enter key in the search input
+    document.getElementById('locationSearch').addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        document.getElementById('searchButton').click();
+      }
+    });
+    </script>
+    </body></html>
